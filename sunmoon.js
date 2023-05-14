@@ -28,15 +28,18 @@ class sunmoon {
     else if(this.state == 1) {
       fill(120)
       ellipse(this.pos.x, this.pos.y, width/5)
+      
+      fill(colours.x, colours.y, colours.z, 50)
+      ellipse(this.pos.x + width/10, this.pos.y, width * 2/8)
     }
   }
   
   
-  dayCycle() {
-    //Every day is 1800 frames, every night is 1800 frames
+  dayCycle(dayLength) {
+    //By default, every day is 1800 frames, every night is 1800 frames
     
     //this.dayProgress is a value ranging from 0 to 1, 0 being the start of the time period and 1 being the end of the time period.
-    this.dayProgress = (frameCount % 1800) / 1800
+    this.dayProgress = (frameCount % dayLength) / dayLength
     
     //this.pos.x is proportional to this.dayProgress
     this.pos.x = this.dayProgress * width
@@ -46,31 +49,49 @@ class sunmoon {
     
     //Keeps track of whether it is day or night.
     //0 is day, 1 is night.
-    this.state = floor(frameCount / 1800) % 2
+    this.state = floor(frameCount / dayLength) % 2
   }
   
   //Sets the background, depending on whether it is day or night.
   backgroundCalc() {
-    if(this.state == 0) {
-      //A pale blue sky background
-      background(135, 206, 235)
-    }
-      
+    let colours = createVector(0, 0, 0)
     
-    else if(this.state == 1) {
-      background(12, 20, 69)
+    //Daytime colour phases
+    if(this.state == 0) {
+      //Sunrise
+      if(this.dayProgress < 0.2) {
+        colours.x = 50 + floor(this.dayProgress * (135 - 50) * 5)
+        colours.y = 70 + floor(this.dayProgress * (206 - 70) * 5)
+        colours.z = 128 + floor(this.dayProgress * (250 - 128) * 5)
+        //console.log("Day Phase 1")
+      }
       
-      //Starter Code (unfinalised) for stars in the night sky; problem is that the stars X and Y change when they aren't supposed to.
-      //for(let i = 0; i < 3; i++) {
-        //let StarColoursChoices = [[72, 63, 254], [255, 66, 39], [214, 85, 199]]
-        
-        //let StarColour = StarColoursChoices[floor(random(0, 2))]
-        //fill(StarColour[0], StarColour[1], StarColour[2])
-        //let starX = random(0, width)
-        //let starY = random(0, height * 1/4)
-        
-        //ellipse(starX, starY, width/100)
-    //}
+      //Afternoon
+      else if(this.dayProgress >= 0.2 && this.dayProgress < 0.8) {
+        colours.x = 135
+        colours.y = 206
+        colours.z = 250
+        //console.log("Day Phase 2")
+      }
+      
+      //Sunset
+      else if(this.dayProgress >= 0.8) {
+        colours.x = 50 + floor((1 - this.dayProgress) * (135 - 50) * 5)
+        colours.y = 70 + floor((1 - this.dayProgress) * (206 - 70) * 5)
+        colours.z = 128 + floor((1 - this.dayProgress) * (250 - 128) * 5)
+        //console.log("Day Phase 3")
+      } 
     }
+    
+    //Night Time
+    if(this.state == 1) {
+        colours.x = 50
+        colours.y = 70
+        colours.z = 128
+        //console.log("Night")
+    }
+    
+    //Note: The RGB values are returned in a vector, then unpackaged in sketch.js.
+    return colours
   }
 }
