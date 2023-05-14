@@ -7,9 +7,6 @@ class raindrop {
     
     //Random raindrop size, always proportional to the canvas size so it scales with larger and smaller screens.
     this.size = random(0.5, 1.5) * width/100;
-    
-    //This is a constant that perhaps can be tweaked in future updates, and affect how fast raindrops accelerate.
-    this.gravCoEff = 0.001
   }
   
   
@@ -52,10 +49,11 @@ class raindrop {
   }
   
   
-  phenomena() {
+  phenomena(gravCoEff) {
     //Gravity starts here, and all other forces, are simulated through the applyForce() function. There is no horizontal component of gravitational force, only vertical component.
     //The Equation Below is derived from Newton's Second Law: F=ma.
     //Gravitational Force = Gravitational Acceleration * Mass; assuming mass is proportional to size of raindrop 
+    this.gravCoEff = gravCoEff
     this.applyForce(0, this.gravCoEff * this.size)
     
     
@@ -73,7 +71,14 @@ class raindrop {
       this.applyForce((noiseValue - 0.5) * 1/60, 0)
     }
     
-    //Perhaps if I decide to add more customisation for these features, I should split it up so that the parameters introduced for each phenomenon are clearer.
+    //It does violate the laws of physics, but isn't it aesthetically pleasing when all the rain just...stop?
+    if(this.gravCoEff == 0) {
+      this.vel.x = 0
+      this.vel.y = 0
+      
+      this.acc.x = 0
+      this.acc.y = 0
+    }
   }
   
   
